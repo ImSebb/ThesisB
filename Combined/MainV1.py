@@ -57,7 +57,7 @@ def eucaldainDistance(x, y, x1, y1):
 
 def distanceFinder(widthInImage):
   
-    distance = ((QR_CODE_SIZE * focalLength) / widthInImage)
+    distance = ((QR_CODE_SIZE * FOCAL_LENGTH) / widthInImage)
 
     return distance
 
