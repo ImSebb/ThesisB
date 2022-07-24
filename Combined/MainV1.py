@@ -122,7 +122,7 @@ def rotParam(rvec):
 
 def getAngle(cmtx, dist, img):
 
-    ret_qr, points = qr.detect(img)
+    ret_qr, points = QR.detect(img)
 
     if ret_qr:
         resultAngle = get_qr_coords(cmtx, dist, points)
