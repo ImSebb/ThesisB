@@ -96,7 +96,7 @@ def get_qr_coords(cmtx, dist, points):
                          [1,0,0]], dtype = 'float32').reshape((4,1,3))
 
     #determine the orientation of QR code coordinate system with respect to camera coorindate system.
-    ret, rvec, tvec = cv.solvePnP(qr_edges, points, cameraMatrix, distortionCoeff)
+    ret, rvec, tvec = cv.solvePnP(qr_edges, points, cmtx, dist)
 
     result = rotParam(rvec)
 
@@ -125,7 +125,7 @@ def getAngle(cmtx, dist):
     ret_qr, points = qr.detect(img)
 
     if ret_qr:
-        resultAngle = get_qr_coords(cameraMatrix, distortionCoeff, points)
+        resultAngle = get_qr_coords(cmtx, dist, points)
 
     return resultAngle
 
