@@ -37,7 +37,7 @@ def detectQR(img):
 def main():
 	flag, img = camera.read() #This captures an image from the camera.
 	if flag == True:
-		getMeasurements(img)
+		print(getMeasurements(img))
 
 def getMeasurements(img):
 	imgSize = findImgSize(img) #Find the size of the QR code in the image
