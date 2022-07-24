@@ -35,6 +35,10 @@ def getMeasurements(img):
         Distance = distanceFinder(imgSize)
         Distance = Distance - Distance*CALIBRATE
         Angle = show_axes(cameraMatrix, distortionCoeff)
+        if Distance is None:
+            Distance = -1
+        if Angle is None:
+            Angle = 0
         return Distance, Angle
 
 
