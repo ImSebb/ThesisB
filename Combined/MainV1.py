@@ -25,10 +25,6 @@ CALIBRATE = 0.23 #This will be calibrated for optimal results
 
 #getMeasurements()
 
-camera = cv.VideoCapture("nvarguscamerasrc ! nvvidconv ! video/x-raw, width=1024, height=576, format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink", cv.CAP_GSTREAMER) #This sets up the camera object
-QR = cv.QRCodeDetector() #This creates the QR code detection object
-cameraMatrix, distortionCoeff = read_camera_parameters()
-
 def detectQR(img):
 
     data = QR.detectAndDecode(img)[0]
@@ -150,6 +146,11 @@ def main():
     flag, img = camera.read() #This captures an image from the camera.
     if flag == True:
         print(getMeasurements(img)[1])
+
+
+camera = cv.VideoCapture("nvarguscamerasrc ! nvvidconv ! video/x-raw, width=1024, height=576, format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink", cv.CAP_GSTREAMER) #This sets up the camera object
+QR = cv.QRCodeDetector() #This creates the QR code detection object
+cameraMatrix, distortionCoeff = read_camera_parameters()
 
 while True:
     main()
