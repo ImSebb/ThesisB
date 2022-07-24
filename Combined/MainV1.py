@@ -26,28 +26,20 @@ CALIBRATE = 0.23 #This will be calibrated for optimal results
 
 camera = cv.VideoCapture("nvarguscamerasrc ! nvvidconv ! video/x-raw, width=1024, height=576, format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink", cv.CAP_GSTREAMER) #This sets up the camera object
 QR = cv.QRCodeDetector() #This creates the QR code detection object
-
+cameraMatrix, distortionCoeff = read_camera_parameters()
 
 def detectQR(img):
 
 	data = QR.detectAndDecode(img)[0]
-
-
-
-def main():
-	flag, img = camera.read() #This captures an image from the camera.
-	if flag == True:
-		print(getMeasurements(img))
 
 def getMeasurements(img):
 	imgSize = findImgSize(img) #Find the size of the QR code in the image
 	if imgSize is not None:
 		Distance = distanceFinder(imgSize)
 		Distance = Distance - Distance*CALIBRATE
-		return Distance
+		Angle = show_axes(cameraMatrix, distortionCoeff)
+		return Distance, Angle
 
-
-# finding Distance between two points
 
 def eucaldainDistance(x, y, x1, y1):
 
@@ -87,6 +79,76 @@ def findImgSize(image):
 
         return euclaDistance
 
+def read_camera_parameters(filepath = 'camera_parameters/intrinsic.dat'):
+
+    inf = open(filepath, 'r')
+
+    cmtx = []
+    dist = []
+
+    #ignore first line
+    line = inf.readline()
+    for _ in range(3):
+        line = inf.readline().split()
+        line = [float(en) for en in line]
+        cmtx.append(line)
+
+    #ignore line that says "distortion"
+    line = inf.readline()
+    line = inf.readline().split()
+    line = [float(en) for en in line]
+    dist.append(line)
+
+    #cmtx = camera matrix, dist = distortion parameters
+    return np.array(cmtx), np.array(dist)
+
+def get_qr_coords(cmtx, dist, points):
+
+    #Selected coordinate points for each corner of QR code.
+    qr_edges = np.array([[0,0,0],
+                         [0,1,0],
+                         [1,1,0],
+                         [1,0,0]], dtype = 'float32').reshape((4,1,3))
+
+    #determine the orientation of QR code coordinate system with respect to camera coorindate system.
+    rvec = cv.solvePnP(qr_edges, points, cameraMatrix, distortionCoeff)[1]
+
+    result = rotParam(rvec)
+
+    return result
+
+def rotParam(rvec):
+    from math import pi,atan2,asin 
+    R = cv.Rodrigues(rvec)[0]
+    roll = 180*atan2(-R[2][1], R[2][2])/pi
+    #pitch = 180*asin(R[2][0])/pi
+    #yaw = 180*atan2(-R[1][0], R[0][0])/pi
+    result = roll + 180
+    if result > 180:
+        result = result - 360
+
+    if result > 0:
+	    result = result + 3.2
+    else:
+        result = result + 5.4
+
+    return result
+
+
+def getAngle(cmtx, dist):
+
+    ret_qr, points = qr.detect(img)
+
+    if ret_qr:
+        resultAngle = get_qr_coords(cmtx, dist, points)
+
+   	return resultAngle
+
+
+def main():
+	flag, img = camera.read() #This captures an image from the camera.
+	if flag == True:
+		print(getMeasurements(img)[1])
 
 while True:
 	main()
