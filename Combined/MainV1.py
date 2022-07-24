@@ -13,6 +13,7 @@ import numpy as np
 import math
 import pyzbar.pyzbar as pyzbar
 import sys
+from math import pi,atan2,asin 
 
 FOCAL_LENGTH = 3.04 #This is the focal length of the camera being used in mm
 QR_CODE_SIZE = 5 #This is the size of the QR code being used
@@ -24,23 +25,6 @@ CALIBRATE = 0.23 #This will be calibrated for optimal results
 #sendMessage()
 
 #getMeasurements()
-
-def detectQR(img):
-
-    data = QR.detectAndDecode(img)[0]
-
-def getMeasurements(img):
-    imgSize = findImgSize(img) #Find the size of the QR code in the image
-    if imgSize is not None:
-        Distance = distanceFinder(imgSize)
-        Distance = Distance - Distance*CALIBRATE
-        Angle = getAngle(cameraMatrix, distortionCoeff)
-        #if Distance is None:
-         #   Distance = -1
-        #if Angle is None:
-        #    Angle = 0
-        return Distance, Angle
-
 
 def eucaldainDistance(x, y, x1, y1):
 
@@ -112,14 +96,14 @@ def get_qr_coords(cmtx, dist, points):
                          [1,0,0]], dtype = 'float32').reshape((4,1,3))
 
     #determine the orientation of QR code coordinate system with respect to camera coorindate system.
-    rvec = cv.solvePnP(qr_edges, points, cameraMatrix, distortionCoeff)[1]
+    ret, rvec, tvec = cv.solvePnP(qr_edges, points, cameraMatrix, distortionCoeff)
 
     result = rotParam(rvec)
 
     return result
 
 def rotParam(rvec):
-    from math import pi,atan2,asin 
+
     R = cv.Rodrigues(rvec)[0]
     roll = 180*atan2(-R[2][1], R[2][2])/pi
     #pitch = 180*asin(R[2][0])/pi
@@ -145,6 +129,22 @@ def getAngle(cmtx, dist):
 
     return resultAngle
 
+def detectQR(img):
+
+    data = QR.detectAndDecode(img)[0]
+    return data
+
+def getMeasurements(img):
+    imgSize = findImgSize(img) #Find the size of the QR code in the image
+    if imgSize is not None:
+        Distance = distanceFinder(imgSize)
+        Distance = Distance - Distance*CALIBRATE
+        Angle = getAngle(cameraMatrix, distortionCoeff)
+        #if Distance is None:
+         #   Distance = -1
+        #if Angle is None:
+        #    Angle = 0
+        return Distance, Angle
 
 def main():
     flag, img = camera.read() #This captures an image from the camera.
