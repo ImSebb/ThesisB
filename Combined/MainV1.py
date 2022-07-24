@@ -30,15 +30,15 @@ cameraMatrix, distortionCoeff = read_camera_parameters()
 
 def detectQR(img):
 
-	data = QR.detectAndDecode(img)[0]
+    data = QR.detectAndDecode(img)[0]
 
 def getMeasurements(img):
-	imgSize = findImgSize(img) #Find the size of the QR code in the image
-	if imgSize is not None:
-		Distance = distanceFinder(imgSize)
-		Distance = Distance - Distance*CALIBRATE
-		Angle = show_axes(cameraMatrix, distortionCoeff)
-		return Distance, Angle
+    imgSize = findImgSize(img) #Find the size of the QR code in the image
+    if imgSize is not None:
+        Distance = distanceFinder(imgSize)
+        Distance = Distance - Distance*CALIBRATE
+        Angle = show_axes(cameraMatrix, distortionCoeff)
+        return Distance, Angle
 
 
 def eucaldainDistance(x, y, x1, y1):
@@ -128,7 +128,7 @@ def rotParam(rvec):
         result = result - 360
 
     if result > 0:
-	    result = result + 3.2
+        result = result + 3.2
     else:
         result = result + 5.4
 
@@ -142,14 +142,14 @@ def getAngle(cmtx, dist):
     if ret_qr:
         resultAngle = get_qr_coords(cmtx, dist, points)
 
-   	return resultAngle
+    return resultAngle
 
 
 def main():
-	flag, img = camera.read() #This captures an image from the camera.
-	if flag == True:
-		print(getMeasurements(img)[1])
+    flag, img = camera.read() #This captures an image from the camera.
+    if flag == True:
+        print(getMeasurements(img)[1])
 
 while True:
-	main()
+    main()
 
