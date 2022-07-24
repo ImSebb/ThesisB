@@ -12,6 +12,7 @@ import cv2 as cv
 import numpy as np
 import math
 import pyzbar.pyzbar as pyzbar
+import sys
 
 FOCAL_LENGTH = 3.04 #This is the focal length of the camera being used in mm
 QR_CODE_SIZE = 5 #This is the size of the QR code being used
