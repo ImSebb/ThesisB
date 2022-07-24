@@ -120,7 +120,7 @@ def rotParam(rvec):
     return result
 
 
-def getAngle(cmtx, dist):
+def getAngle(cmtx, dist, img):
 
     ret_qr, points = qr.detect(img)
 
@@ -139,7 +139,7 @@ def getMeasurements(img):
     if imgSize is not None:
         Distance = distanceFinder(imgSize)
         Distance = Distance - Distance*CALIBRATE
-        Angle = getAngle(cameraMatrix, distortionCoeff)
+        Angle = getAngle(cameraMatrix, distortionCoeff, img)
         #if Distance is None:
          #   Distance = -1
         #if Angle is None:
@@ -149,9 +149,8 @@ def getMeasurements(img):
 def main():
     flag, img = camera.read() #This captures an image from the camera.
     if flag == True:
-        if img is not None:
-            distanceM, angleM = getMeasurements(img)
-            print(angleM)
+        distanceM, angleM = getMeasurements(img)
+        print(angleM)
 
 
 camera = cv.VideoCapture("nvarguscamerasrc ! nvvidconv ! video/x-raw, width=1024, height=576, format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink", cv.CAP_GSTREAMER) #This sets up the camera object
