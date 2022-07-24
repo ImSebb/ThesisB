@@ -42,7 +42,7 @@ def main():
 def getMeasurements(img):
 	imgSize = findImgSize(img) #Find the size of the QR code in the image
 	if imgSize is not None:
-		Distance = distanceFinder(FOCAL_LENGTH, QR_CODE_SIZE, imgSize)
+		Distance = distanceFinder(imgSize)
 		Distance = Distance - Distance*CALIBRATE
 		return Distance
 
