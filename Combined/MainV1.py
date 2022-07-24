@@ -125,7 +125,7 @@ def getAngle(cmtx, dist):
     ret_qr, points = qr.detect(img)
 
     if ret_qr:
-        resultAngle = get_qr_coords(cmtx, dist, points)
+        resultAngle = get_qr_coords(cameraMatrix, distortionCoeff, points)
 
     return resultAngle
 
