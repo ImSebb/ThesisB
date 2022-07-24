@@ -146,7 +146,7 @@ def main():
     flag, img = camera.read() #This captures an image from the camera.
     if flag == True:
         distanceM, angleM = getMeasurements(img)
-        print angleM
+        print(angleM)
 
 
 camera = cv.VideoCapture("nvarguscamerasrc ! nvvidconv ! video/x-raw, width=1024, height=576, format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink", cv.CAP_GSTREAMER) #This sets up the camera object
