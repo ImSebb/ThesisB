@@ -11,15 +11,16 @@
 import cv2 as cv
 import numpy as np
 import math
-import pyzbar.pyzbar as pyzbar
+#import pyzbar.pyzbar as pyzbar
 import sys
 from math import pi,atan2,asin 
+import serial
 
 FOCAL_LENGTH = 3.04 #This is the focal length of the camera being used in mm
 QR_CODE_SIZE = 5 #This is the size of the QR code being used
 CALIBRATE = 0.23 #This will be calibrated for optimal results
 #receiveMessage()
-
+STATE = 0
 #detectQR()
 
 #sendMessage()
@@ -134,6 +135,12 @@ def detectQR(img):
     data = QR.detectAndDecode(img)[0]
     return data
 
+def communication(data):
+    arduino.write(data)
+    receiveData = arduino.readline()
+    return receiveData
+
+
 def getMeasurements(img):
     imgSize = findImgSize(img) #Find the size of the QR code in the image
     if imgSize is not None:
@@ -147,16 +154,22 @@ def getMeasurements(img):
         return Distance, Angle
 
 def main():
+
     flag, img = camera.read() #This captures an image from the camera.
     if flag == True:
         distanceM, angleM = getMeasurements(img)
         print(angleM)
 
+def test():
+    col = np.array([[0],[0],[1]],dtype = 'float32')
+    R = cv.Rodrigues(col)[0]
+    print(R)
 
 camera = cv.VideoCapture("nvarguscamerasrc ! nvvidconv ! video/x-raw, width=1024, height=576, format=BGRx ! videoconvert ! video/x-raw, format=BGR ! appsink", cv.CAP_GSTREAMER) #This sets up the camera object
 QR = cv.QRCodeDetector() #This creates the QR code detection object
 cameraMatrix, distortionCoeff = read_camera_parameters()
-
-while True:
-    main()
+#arduino = serial.Serial(port='COMPORT', baudrate=9600, timeout=0.1)
+test()
+#while True:
+    #main()
 
